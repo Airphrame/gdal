@@ -2820,11 +2820,13 @@ GDALRegenerateOverviewsMultiBand(int nBands, GDALRasterBand** papoSrcBands,
                 /* Compute the resulting overview block */
                 for(iBand=0;iBand<nBands && eErr == CE_None;iBand++)
                 {
+                    bool bAlpha = papoSrcBands[iBand]->GetColorInterpretation() & GCI_AlphaBand;
+
                     eErr = pfnResampleFn(   dfXRatioDstToSrc, dfYRatioDstToSrc,
                                             0.0, 0.0,
                                             eWrkDataType,
                                             papaChunk[iBand],
-                                            pabyChunkNoDataMask,
+                                            bAlpha ? NULL : pabyChunkNoDataMask,
                                             nChunkXOffQueried, nChunkXSizeQueried,
                                             nChunkYOffQueried, nChunkYSizeQueried,
                                             nDstXOff, nDstXOff + nDstXCount,

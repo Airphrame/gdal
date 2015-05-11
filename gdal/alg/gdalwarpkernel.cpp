@@ -2683,7 +2683,7 @@ static int GWKResample( GDALWarpKernel *poWK, int iBand,
     for ( j = jMin; j < jMax; ++j )
     {
         double dfWeight1;
-        bool bValidRow;
+        bool bValidRow = FALSE;
 
         if ( j >= jMinSrc && j < jMaxSrc )
         {
@@ -2733,7 +2733,7 @@ static int GWKResample( GDALWarpKernel *poWK, int iBand,
 
             dfAccumulatorDensityWeightLocal += dfWeight2;
 
-            if ( bValidRow && i >= iMinSrc && i < iMaxSrc && j >= jMinSrc && j < jMaxSrc )
+            if ( bValidRow && i >= iMinSrc && i < iMaxSrc )
             {
                 if( padfRowDensity != NULL )
                 {

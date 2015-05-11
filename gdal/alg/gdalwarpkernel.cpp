@@ -1902,16 +1902,24 @@ static int GWKBilinearResample4Sample( GDALWarpKernel *poWK, int iBand,
     double  dfAccumulatorDivisor = 0.0;
     int     bShifted = FALSE;
 
-    if (iSrcX == -1)
+    if ( iSrcX < 0 || iSrcX >= nSrcXSize || iSrcY < 0 || iSrcY >= nSrcYSize ) {
+        *pdfReal = 0.0;
+        *pdfImag = 0.0;
+        *pdfDensity = 0.0;
+        return FALSE;
+    }
+
+    if ( iSrcX == -1)
     {
         iSrcX = 0;
         dfRatioX = 1;
     }
-    if (iSrcY == -1)
+    if ( iSrcY == -1)
     {
         iSrcY = 0;
         dfRatioY = 1;
     }
+
     iSrcOffset = iSrcX + iSrcY * nSrcXSize;
 
     // Shift so we don't overrun the array
@@ -1921,7 +1929,7 @@ static int GWKBilinearResample4Sample( GDALWarpKernel *poWK, int iBand,
         bShifted = TRUE;
         --iSrcOffset;
     }
-    
+
     // Get pixel row
     if ( iSrcY >= 0 && iSrcY < nSrcYSize
          && iSrcOffset >= 0 && iSrcOffset < nSrcXSize * nSrcYSize
@@ -1971,7 +1979,7 @@ static int GWKBilinearResample4Sample( GDALWarpKernel *poWK, int iBand,
     {
         double dfMult1 = dfRatioX * (1.0-dfRatioY);
         double dfMult2 = (1.0-dfRatioX) * (1.0-dfRatioY);
-        
+
         // Shifting corrected
         if ( bShifted )
         {
@@ -2006,27 +2014,29 @@ static int GWKBilinearResample4Sample( GDALWarpKernel *poWK, int iBand,
 /* -------------------------------------------------------------------- */
 /*      Return result.                                                  */
 /* -------------------------------------------------------------------- */
-    if ( dfAccumulatorDivisor == 1.0 )
-    {
-        *pdfReal = dfAccumulatorReal;
-        *pdfImag = dfAccumulatorImag;
-        *pdfDensity = dfAccumulatorDensity;
-        return TRUE;
-    }
-    else if ( dfAccumulatorDivisor < 0.00001 )
+    
+    if ( dfAccumulatorDivisor < 0.00001)
     {
         *pdfReal = 0.0;
         *pdfImag = 0.0;
         *pdfDensity = 0.0;
         return FALSE;
     }
+
+    if ( dfAccumulatorDivisor == 1.0 )
+    {
+        *pdfReal = dfAccumulatorReal;
+        *pdfImag = dfAccumulatorImag;
+    }
     else
     {
         *pdfReal = dfAccumulatorReal / dfAccumulatorDivisor;
         *pdfImag = dfAccumulatorImag / dfAccumulatorDivisor;
-        *pdfDensity = dfAccumulatorDensity / dfAccumulatorDivisor;
-        return TRUE;
     }
+
+    *pdfDensity = dfAccumulatorDensity;
+
+    return TRUE;
 }
 
 template<class T>

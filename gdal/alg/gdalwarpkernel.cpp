@@ -3985,7 +3985,8 @@ static void GWKGeneralCaseThread( void* pData)
 /* -------------------------------------------------------------------- */
             double  dfDensity = 1.0;
 
-            if( poWK->panUnifiedSrcValid != NULL
+            if( bWithinSrc
+                && poWK->panUnifiedSrcValid != NULL
                 && !(poWK->panUnifiedSrcValid[iSrcOffset>>5]
                      & (0x01 << (iSrcOffset & 0x1f))) )
                 continue;

@@ -2335,12 +2335,8 @@ CPLErr GDALWarpOperation::ComputeSourceWindow(int nDstXOff, int nDstYOff,
     if( dfCeilMaxYOut > INT_MAX )
         dfCeilMaxYOut = INT_MAX;
 
-    int nSrcXSizeRaw = MIN( GDALGetRasterXSize(psOptions->hSrcDS) - *pnSrcXOff,
-                       ((int) dfCeilMaxXOut) - *pnSrcXOff );
-    int nSrcYSizeRaw = MIN( GDALGetRasterYSize(psOptions->hSrcDS) - *pnSrcYOff,
-                       ((int) dfCeilMaxYOut) - *pnSrcYOff );
-    nSrcXSizeRaw = MAX(0,nSrcXSizeRaw);
-    nSrcYSizeRaw = MAX(0,nSrcYSizeRaw);
+    int nSrcXSizeRaw = (int) (dfMaxXOut - dfMinXOut);
+    int nSrcYSizeRaw = (int) (dfMaxYOut - dfMinYOut);
     
     *pnSrcXOff = MAX(0,(int) floor( dfMinXOut ) - nResWinSize );
     *pnSrcYOff = MAX(0,(int) floor( dfMinYOut ) - nResWinSize );

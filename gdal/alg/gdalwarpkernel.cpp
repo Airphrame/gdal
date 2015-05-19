@@ -923,6 +923,8 @@ CPLErr GDALWarpKernel::PerformWarp()
         if( fabs(dfYReciprocalScale-nYReciprocalScale) < 0.05 )
             dfYScale = 1.0 / nYReciprocalScale;
     }
+    dfXScale = MAX(dfXScale, 0.001);
+    dfYScale = MAX(dfYScale, 0.001);
     /*CPLDebug("WARP", "dfXScale = %f, dfYScale = %f", dfXScale, dfYScale);*/
     
     int bUse4SamplesFormula = (dfXScale >= 0.95 && dfYScale >= 0.95);
